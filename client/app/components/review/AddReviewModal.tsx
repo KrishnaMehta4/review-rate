@@ -12,67 +12,34 @@ interface AddReviewModalProps {
   companyId: string;
 }
 
-const AddReviewModal = ({
-  open,
-  onClose,
-  companyId,
-}: AddReviewModalProps) => {
-
+const AddReviewModal = ({ open, onClose, companyId }: AddReviewModalProps) => {
   const [fullName, setFullName] = useState("");
   const [subject, setSubject] = useState("");
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(4);
 
   const handleSaveReview = async () => {
+    if (!fullName.trim() || !subject.trim() || !review.trim()) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
     try {
-
-      if (
-        !fullName ||
-        !subject ||
-        !review
-      ) {
-        alert("Please Fill All Fields");
-        return;
-      }
-
       const response = await axios.post(
         `http://localhost:5000/api/company/${companyId}/review`,
-        {
-          fullName,
-          subject,
-          reviewText: review,
-          rating,
-        }
+        { fullName, subject, reviewText: review, rating }
       );
-
       console.log(response.data);
-// RESET FORM
-setFullName("");
-setSubject("");
-setReview("");
-setRating(4);
-
-// SUCCESS MESSAGE
-toast.success(
-  "Review Added Successfully"
-);
-
-// CLOSE MODAL
-onClose();
-
-// REFRESH PAGE
-window.location.reload();
-
+      setFullName("");
+      setSubject("");
+      setReview("");
+      setRating(4);
+      toast.success("Review Added Successfully");
+      onClose();
+      window.location.reload();
     } catch (error: any) {
-
-      console.log(
-        error.response?.data || error
-      );
-
-      toast.error(
-  error.response?.data?.message ||
-    "Failed To Add Review"
-);
+      console.log(error.response?.data || error);
+      toast.error(error.response?.data?.message || "Failed To Add Review");
     }
   };
 
@@ -80,25 +47,16 @@ window.location.reload();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[2px]">
-
-      {/* MODAL */}
       <div className="relative w-[318px] bg-white rounded-[16px] shadow-2xl overflow-hidden px-[16px] pt-[18px] pb-[18px]">
-
+        
         {/* TOP DESIGN */}
         <div className="absolute top-0 left-0">
-
-          {/* PURPLE */}
           <div className="w-[52px] h-[52px] rounded-br-[52px] bg-gradient-to-b from-[#D52BFF] to-[#5B27FF]" />
-
-          {/* LIGHT */}
           <div className="absolute top-0 left-[30px] w-[52px] h-[52px] rounded-full bg-[#D9C6FF]" />
         </div>
 
         {/* CLOSE */}
-        <button
-          onClick={onClose}
-          className="absolute top-[14px] right-[14px] text-[#7A7A7A] text-[18px]"
-        >
+        <button onClick={onClose} className="absolute top-[14px] right-[14px] text-[#7A7A7A] text-[18px]">
           <IoClose />
         </button>
 
@@ -112,84 +70,61 @@ window.location.reload();
 
           {/* FULL NAME */}
           <div>
-            <label className="block text-[9px] text-[#7A7A7A] mb-[4px]">
-              Full Name
-            </label>
-
-            <input
-              type="text"
-              placeholder="Enter"
-              value={fullName}
-              onChange={(e) =>
-                setFullName(e.target.value)
-              }
-              className="w-full h-[24px] border border-[#DDDDDD] rounded-[3px] px-2 text-[10px] text-black outline-none placeholder:text-[#B8B8B8]"
-            />
+            <label className="block text-[9px] text-[#7A7A7A] mb-[4px]">Full Name</label>
+            <div className="border border-[#DDDDDD] rounded-[3px] px-2 py-2 bg-white">
+              <input
+                type="text"
+                placeholder="Enter"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full h-[24px] border border-[#DDDDDD] rounded-[3px] px-2 text-[10px] text-black outline-none placeholder:text-[#B8B8B8]"
+              />
+            </div>
           </div>
 
           {/* SUBJECT */}
           <div className="mt-[10px]">
-            <label className="block text-[9px] text-[#7A7A7A] mb-[4px]">
-              Subject
-            </label>
-
-            <input
-              type="text"
-              placeholder="Enter"
-              value={subject}
-              onChange={(e) =>
-                setSubject(e.target.value)
-              }
-              className="w-full h-[24px] border border-[#DDDDDD] rounded-[3px] px-2 text-[10px] text-black outline-none placeholder:text-[#B8B8B8]"
-            />
+            <label className="block text-[9px] text-[#7A7A7A] mb-[4px]">Subject</label>
+            <div className="border border-[#DDDDDD] rounded-[3px] px-2 py-2 bg-white">
+              <input
+                type="text"
+                placeholder="Enter"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="w-full h-[24px] border border-[#DDDDDD] rounded-[3px] px-2 text-[10px] text-black outline-none placeholder:text-[#B8B8B8]"
+              />
+            </div>
           </div>
 
           {/* REVIEW */}
           <div className="mt-[10px]">
-            <label className="block text-[9px] text-[#7A7A7A] mb-[4px]">
-              Enter your Review
-            </label>
-
-            <textarea
-              placeholder="Description"
-              value={review}
-              onChange={(e) =>
-                setReview(e.target.value)
-              }
-              className="w-full h-[58px] border border-[#DDDDDD] rounded-[3px] px-2 py-2 text-[10px] text-black outline-none resize-none placeholder:text-[#B8B8B8]"
-            />
+            <label className="block text-[9px] text-[#7A7A7A] mb-[4px]">Enter your Review</label>
+            <div className="border border-[#DDDDDD] rounded-[3px] px-2 py-2 bg-white">
+              <textarea
+                placeholder="Description"
+                value={review}
+                onChange={(e) => setReview(e.target.value)}
+                className="w-full h-[50px] text-[10px] text-black outline-none resize-none bg-transparent placeholder:text-[#B8B8B8]"
+              />
+            </div>
           </div>
 
           {/* RATING */}
           <div className="mt-[14px]">
-
-            <h3 className="text-[13px] font-semibold text-black mb-[8px]">
-              Rating
-            </h3>
-
+            <h3 className="text-[13px] font-semibold text-black mb-[8px]">Rating</h3>
             <div className="flex items-center justify-between">
-
-              {/* STARS */}
               <div className="flex items-center gap-[5px]">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <FaStar
                     key={star}
-                    onClick={() =>
-                      setRating(star)
-                    }
+                    onClick={() => setRating(star)}
                     className={`text-[18px] cursor-pointer transition-all ${
-                      star <= rating
-                        ? "text-[#F5B301]"
-                        : "text-[#D9D9D9]"
+                      star <= rating ? "text-[#F5B301]" : "text-[#D9D9D9]"
                     }`}
                   />
                 ))}
               </div>
-
-              {/* TEXT */}
-              <p className="text-[10px] text-[#8A8A8A]">
-                Satisfied
-              </p>
+              <p className="text-[10px] text-[#8A8A8A]">Satisfied</p>
             </div>
           </div>
 
@@ -197,11 +132,12 @@ window.location.reload();
           <div className="flex justify-center mt-[18px]">
             <button
               onClick={handleSaveReview}
-              className="w-[60px] h-[24px] rounded-[3px] bg-gradient-to-b from-[#C229FF] to-[#5C28FF] text-white text-[10px] font-medium"
+              className="w-[60px] h-[24px] rounded-[3px] bg-gradient-to-b from-[#C229FF] to-[#5C28FF] text-white text-[10px] font-medium hover:opacity-90 hover:scale-[1.02] transition-all duration-200"
             >
               Save
             </button>
           </div>
+
         </div>
       </div>
     </div>

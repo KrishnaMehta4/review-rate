@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FaStar } from "react-icons/fa";
+import { IoLocationSharp } from "react-icons/io5";
 
 interface CompanyCardProps {
   company: {
@@ -14,93 +15,78 @@ interface CompanyCardProps {
   };
 }
 
-const CompanyCard = ({
-  company,
-}: CompanyCardProps) => {
+const CompanyCard = ({ company }: CompanyCardProps) => {
+  const formattedDate = company.foundedOn
+    ? new Date(company.foundedOn).toLocaleDateString("en-GB").replace(/\//g, "-")
+    : "";
+
   return (
-    <div className="w-full min-h-[170px] bg-white border border-[#ECECEC] rounded-[8px] shadow-sm px-6 py-5 flex items-center justify-between">
-      
-      {/* LEFT SIDE */}
-      <div className="flex items-start gap-5">
-        
+    <div className="w-full py-4 flex items-center justify-between gap-3 border-b border-gray-200 last:border-b-0">
+
+      {/* LEFT */}
+      <div className="flex items-center gap-3 md:gap-4 min-w-0">
+
         {/* LOGO */}
-        <div className="w-[84px] h-[84px] rounded-[6px] overflow-hidden bg-[#111827] flex items-center justify-center shrink-0">
-          
+        <div className="w-[44px] h-[44px] sm:w-[52px] sm:h-[52px] md:w-[56px] md:h-[56px] rounded-[6px] overflow-hidden bg-[#111827] flex items-center justify-center shrink-0">
           <img
-            src={
-              company.logo
-                ? company.logo
-                : "https://cdn-icons-png.flaticon.com/512/5968/5968705.png"
-            }
+            src={company.logo || "https://cdn-icons-png.flaticon.com/512/5968/5968705.png"}
             alt={company.name}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              e.currentTarget.src =
-                "https://cdn-icons-png.flaticon.com/512/5968/5968705.png";
-            }}
+            onError={(e) => { e.currentTarget.src = "https://cdn-icons-png.flaticon.com/512/5968/5968705.png"; }}
           />
         </div>
 
-        {/* CONTENT */}
-        <div>
-          <h2 className="text-[28px] font-semibold text-black leading-none">
+        {/* INFO */}
+        <div className="min-w-0">
+          <h2 className="text-[13px] md:text-[14px] font-semibold text-black leading-tight truncate">
             {company.name}
           </h2>
 
-          {/* LOCATION */}
-          <p className="mt-3 text-[13px] text-[#7A7A7A]">
-            {company.location}
+          <p className="flex items-center gap-[3px] mt-[3px] text-[11px] text-[#7A7A7A] truncate">
+            <IoLocationSharp className="text-[10px] shrink-0" />
+            <span className="truncate">{company.location}</span>
           </p>
 
           {/* DESCRIPTION */}
-          <p className="mt-2 max-w-[650px] text-[13px] leading-[22px] text-[#5E5E5E]">
-            {company.description}
-          </p>
+          {company.description && (
+            <p className="mt-[4px] text-[11px] text-[#9A9A9A] leading-[16px] line-clamp-2 max-w-[500px]">
+              {company.description}
+            </p>
+          )}
 
-          {/* RATINGS */}
-          <div className="flex items-center gap-3 mt-4">
-            
-            <span className="text-[28px] font-bold text-black">
-              {company.averageRating}
+          <div className="flex items-center gap-1 md:gap-2 mt-[5px] flex-wrap">
+            <span className="text-[12px] font-bold text-black">
+              {company.averageRating > 0 ? company.averageRating.toFixed(1) : "0.0"}
             </span>
-
             <div className="flex items-center gap-[2px]">
               {[1, 2, 3, 4, 5].map((star) => (
                 <FaStar
                   key={star}
-                  className={`text-[15px] ${
-                    star <=
-                    Math.round(company.averageRating)
-                      ? "text-[#F5B301]"
-                      : "text-[#DDDDDD]"
+                  className={`text-[10px] md:text-[11px] ${
+                    star <= Math.round(company.averageRating) ? "text-[#F5B301]" : "text-[#DDDDDD]"
                   }`}
                 />
               ))}
             </div>
-
-            <span className="text-[22px] text-black font-medium">
+            <span className="text-[11px] text-[#555]">
               {company.reviewCount} Reviews
             </span>
           </div>
         </div>
       </div>
 
-      {/* RIGHT SIDE */}
-      <div className="flex flex-col items-end justify-between h-[100px]">
-        
-        <p className="text-[12px] text-[#9B9B9B]">
-          Founded on{" "}
-          {new Date(
-            company.foundedOn
-          ).toLocaleDateString()}
+      {/* RIGHT */}
+      <div className="flex flex-col items-end gap-2 shrink-0">
+        <p className="hidden sm:block text-[10px] text-[#9B9B9B] whitespace-nowrap">
+          Founded on {formattedDate}
         </p>
-
         <Link href={`/company/${company._id}`}>
-          <button className="w-[130px] h-[42px] rounded-[4px] bg-[#2F2F2F] text-white text-[14px] font-medium hover:bg-black transition-all">
+          <button className="w-[90px] sm:w-[100px] md:w-[110px] h-[30px] md:h-[32px] rounded-[4px] bg-[#2F2F2F] text-white text-[11px] md:text-[12px] font-medium hover:bg-black hover:scale-[1.02] transition-all duration-200">
             Detail Review
           </button>
         </Link>
       </div>
+
     </div>
   );
 };
